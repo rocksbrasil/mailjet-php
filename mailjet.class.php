@@ -45,15 +45,23 @@ class mailjet{
     }
     function put($funcName, $parameters = null){
         $callUrl = $this->endpointUrl.'/'.$funcName;
-        $headers = Array('PUT');
-        if($retorno = $this->curlConnect($callUrl, null, $parameters, $headers)){
+        if($retorno = $this->curlConnect($callUrl, null, $parameters, null, 5, 'PUT')){
             if(isset($retorno['success']) && isset($retorno[$funcName])){
                 return $retorno[$funcName];
             }
         }
         return $retorno;
     }
-    private function curlConnect($url, $get = null, $post = null, $headers = null, $timeout = 5){
+    function delete($funcName, $parameters = null){
+        $callUrl = $this->endpointUrl.'/'.$funcName;
+        if($retorno = $this->curlConnect($callUrl, null, $parameters, null, 5, 'DELETE')){
+            if(isset($retorno['success']) && isset($retorno[$funcName])){
+                return $retorno[$funcName];
+            }
+        }
+        return $retorno;
+    }
+    private function curlConnect($url, $get = null, $post = null, $headers = null, $timeout = 5, $customRequest = null){
         $headers[] = 'Content-type:application/json';
         if($get && !empty($get)){
             $url = trim($url, ' /') . '?' . http_build_query($get);
@@ -74,6 +82,9 @@ class mailjet{
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        if($customRequest){
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $customRequest);
+        }
         $returnData = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
