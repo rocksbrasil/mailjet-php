@@ -1,8 +1,9 @@
 # CakePHP 3
 
+*.settings
 /vendor/*
 /config/app.php
-
+*.project
 /tmp/cache/models/*
 !/tmp/cache/models/empty
 /tmp/cache/persistent/*
